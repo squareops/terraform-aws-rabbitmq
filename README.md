@@ -1,81 +1,55 @@
-## IAM Permission
-<!-- BEGINNING OF PRE-COMMIT-PIKE DOCS HOOK -->
-The Policy required is:
+## AWS RabbitMQ Terraform Module
+![squareops_avatar]
 
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": [
-                "ec2:AuthorizeSecurityGroupEgress",
-                "ec2:AuthorizeSecurityGroupIngress",
-                "ec2:CreateNetworkInterface",
-                "ec2:CreateNetworkInterfacePermission",
-                "ec2:CreateSecurityGroup",
-                "ec2:CreateTags",
-                "ec2:DeleteNetworkInterface",
-                "ec2:DeleteNetworkInterfacePermission",
-                "ec2:DeleteSecurityGroup",
-                "ec2:DeleteTags",
-                "ec2:DescribeAccountAttributes",
-                "ec2:DescribeInternetGateways",
-                "ec2:DescribeNetworkInterfaces",
-                "ec2:DescribeSecurityGroups",
-                "ec2:DescribeSubnets",
-                "ec2:DescribeVpcs",
-                "ec2:DetachNetworkInterface",
-                "ec2:RevokeSecurityGroupEgress",
-                "ec2:RevokeSecurityGroupIngress"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
-            "Sid": "VisualEditor1",
-            "Effect": "Allow",
-            "Action": [
-                "mq:CreateBroker",
-                "mq:CreateTags",
-                "mq:CreateUser",
-                "mq:DeleteBroker",
-                "mq:DeleteTags",
-                "mq:DeleteUser",
-                "mq:DescribeBroker",
-                "mq:DescribeUser",
-                "mq:UpdateBroker",
-                "mq:UpdateUser"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
-            "Sid": "VisualEditor2",
-            "Effect": "Allow",
-            "Action": [
-                "secretsmanager:CreateSecret",
-                "secretsmanager:DeleteSecret",
-                "secretsmanager:DescribeSecret",
-                "secretsmanager:GetResourcePolicy",
-                "secretsmanager:GetSecretValue",
-                "secretsmanager:PutSecretValue",
-                "secretsmanager:TagResource",
-                "secretsmanager:UntagResource"
-            ],
-            "Resource": [
-                "*"
-            ]
-        }
-    ]
+[squareops_avatar]: https://squareops.com/wp-content/uploads/2022/12/squareops-logo.png
+
+### [SquareOps Technologies](https://squareops.com/) Your DevOps Partner for Accelerating cloud journey.
+<br>
+We publish several terraform modules.
+<br>
+Terraform Module to create AWS AmazonMQ on AWS Cloud.
+
+## Uses Example
+```hcl
+module "rabbitmq_broker" {
+  source = "gitlab.com/sq-ia/aws/rabbitmq.git"
+  environment                = "production"
+  name                       = "skaf"
+  engine_type                = "RabbitMQ"
+  engine_version             = "3.8.23"
+  storage_type               = "ebs"
+  host_instance_type         = "mq.m5.large"
+  authentication_strategy    = "simple"
+  deployment_mode            = "SINGLE_INSTANCE"
+  apply_immediately          = true
+  auto_minor_version_upgrade = false
+  publicly_accessible        = false
+  vpc_id                     = "vpc-xyz5ed733e273skaf"
+  subnet_ids                 = ["subnet-xyz35ec60335fskaf"]
+  allowed_cidr_blocks        = []
+  allowed_security_groups    = ["sg-xyzf8bdc01fd9skaf"]
+  port                       = 5671
+  username                   = "admin"
+  maintenance_window_start_time = {
+    day_of_week = "SUNDAY"
+    time_of_day = "00:30"
+    time_zone   = "GMT"
+  }
 }
 
-
 ```
-<!-- END OF PRE-COMMIT-PIKE DOCS HOOK -->
+## Important Notes
+1. This module permit safety institution regulations to permit access to the broker.
+2. By default, the variable create_random_password is set to true. Therefore, even if the user provides a password, it will not be read. The create_random_password variable should be set to false and the password variable should have a non-null value to be read and used.
+
+<!-- ## Security & Compliance [<img src="	https://prowler.pro/wp-content/themes/prowler-pro/assets/img/logo.svg" width="250" align="right" />](https://prowler.pro/)
+
+Security scanning is graciously provided by Prowler. Proowler is the leading fully hosted, cloud-native solution providing continuous cluster security and compliance.
+
+| Benchmark | Description |
+|--------|---------------|
+| Ensure that encryption is enabled for RDS instances | Enabled for RDS created using this module. | -->
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
@@ -83,14 +57,14 @@ The Policy required is:
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.23 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0.0 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.23 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | >= 3.0.0 |
 
 ## Modules
 
@@ -145,3 +119,70 @@ The Policy required is:
 | <a name="output_rabbitmq_password"></a> [rabbitmq\_password](#output\_rabbitmq\_password) | The Rabbitmq password (this password may be old, because Terraform doesn't track it after initial creation) |
 | <a name="output_rabbitmq_security_group"></a> [rabbitmq\_security\_group](#output\_rabbitmq\_security\_group) | The security group ID of the cluster |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+## Contribution & Issue Reporting
+
+To contribute to a project, you can typically:
+
+  1. Find the repository on a platform like GitHub
+  2. Fork the repository to your own account
+  3. Make changes to the code
+  4. Submit a pull request to the original repository
+
+To report an issue with a project:
+
+  1. Check the repository's [issue tracker](https://github.com/squareops/terraform-aws-vpc/issues) on GitHub
+  2. Search to see if the issue has already been reported
+  3. If you can't find an answer to your question in the documentation or issue tracker, you can ask a question by creating a new issue. Be sure to provide enough context and details so others can understand your problem.
+  4. Contributing to the project can be a great way to get involved and get help. The maintainers and other contributors may be more likely to help you if you're already making contributions to the project.
+
+## Our Other Projects
+
+We have a number of other projects that you might be interested in:
+
+  1. [terraform-aws-vpc](https://github.com/squareops/terraform-aws-vpc): Terraform module to create Networking resources for workload deployment on AWS Cloud.
+
+  2. [terraform-aws-keypair](https://github.com/squareops/terraform-aws-keypair): Terraform module which creates EC2 key pair on AWS. The private key will be stored on SSM.
+
+     Follow Us:
+
+     To stay updated on our projects and future release, follow us on
+     [GitHub](https://github.com/squareops/),
+     [LinkedIn](https://www.linkedin.com/company/squareops-technologies-pvt-ltd/)
+
+     By joining our both the [email](https://github.com/squareops) and [Slack community](https://github.com/squareops), you can benefit from the different ways in which we provide support. You can receive timely notifications and updates through email and engage in real-time conversations and discussions with other members through Slack. This combination of resources can help you stay informed, get help when you need it, and contribute to the project in a meaningful way.  
+
+## Security, Validation and pull-requests
+we have offered here high standard, quality code. Hence we are using several [pre-commit hooks](.pre-commit-config.yaml) and [GitHub Actions](https://gitlab.com/sq-ia/aws/eks/-/tree/v1.0.0#security-validation-and-pull-requests) as a workflow. So here we will create pull-requests to any branch and validate the request automatically using pre-commit tool.
+
+## License
+
+Apache License, Version 2.0, January 2004 (http://www.apache.org/licenses/).
+
+## Support Us
+
+To support a GitHub project by liking it, you can follow these steps:
+
+  1. Visit the repository: Navigate to the GitHub repository.
+
+  2. Click the "Star" [button](https://github.com/squareops/terraform-aws-vpc): On the repository page, you'll see a "Star" button in the upper right corner. Clicking on it will star the repository, indicating your support for the project.
+
+  3. Optionally, you can also leave a comment on the repository or open an issue to give feedback or suggest changes.
+
+Starring a repository on GitHub is a simple way to show your support and appreciation for the project. It also helps to increase the visibility of the project and make it more discoverable to others.
+
+## Who we are
+
+We believe that the key to success in the digital age is the ability to deliver value quickly and reliably. That’s why we offer a comprehensive range of DevOps & Cloud services designed to help your organization optimize its systems & Processes for speed and agility.
+
+  1. We are an AWS Advanced consulting partner which reflects our deep expertise in AWS Cloud and helping 100+ clients over the last 4 years.
+  2. Expertise in Kubernetes and overall container solution helps companies expedite their journey by 10X.
+  3. Infrastructure Automation is a key component to the success of our Clients and our Expertise helps deliver the same in the shortest time.
+  4. DevSecOps as a service to implement security within the overall DevOps process and helping companies deploy securely and at speed.
+  5. Platform engineering which supports scalable,Cost efficient infrastructure that supports rapid development, testing, and deployment.
+  6. 24*7 SRE service to help you Monitor the state of your infrastructure and eradicate any issue within the SLA.
+
+We provide [support](https://squareops.com/contact-us/) on all of our projects, no matter how small or large they may be.
+
+You can find more information about our company on this [squareops.com](https://squareops.com/), follow us on [linkdin](https://www.linkedin.com/company/squareops-technologies-pvt-ltd/), or fill out a [job application](https://squareops.com/careers/). If you have any questions or would like assistance with your cloud strategy and implementation, please don't hesitate to [contact us](https://squareops.com/contact-us/).
+

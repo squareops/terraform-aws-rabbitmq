@@ -1,14 +1,8 @@
 variable "name" {
   description = "The name of the amazonmq cluster"
   type        = string
-  default     = "us-east-1"
+  default     = ""
 }
-
-# variable "region" {
-#   description = "AWS Region"
-#   type        = string
-#   default     = ""
-# }
 
 variable "environment" {
   description = "The name of environment"
@@ -21,7 +15,6 @@ variable "vpc_id" {
   type        = string
   default     = ""
 }
-
 
 variable "allowed_cidr_blocks" {
   description = "A list of CIDR blocks which are allowed to access the database"
@@ -40,13 +33,6 @@ variable "port" {
   default     = 5671
   type        = number
 }
-
-#variable "create_sg" {
-#description = ""
-#type        = bool
-#default     = false
-#}
-
 
 variable "subnet_ids" {
   type        = list(string)
@@ -127,7 +113,6 @@ variable "maintenance_window_start_time" {
     time_of_day = "22:45"
     time_zone   = "Europe/Berlin"
   }
-
 }
 
 variable "recovery_window_aws_secret" {
