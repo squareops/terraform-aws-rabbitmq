@@ -18,8 +18,7 @@ module "rabbitmq_broker" {
   vpc_id                     = "vpc-xyz5ed3skaf"
   username                   = "admin"
   subnet_ids                 = ["subnet-xyz355fskaf"]
-  engine_type                = "RabbitMQ"
-  engine_version             = "3.8.23"
+  engine_version             = "3.10.20"
   storage_type               = "ebs"
   host_instance_type         = "mq.m5.large"
   deployment_mode            = "SINGLE_INSTANCE"

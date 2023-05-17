@@ -14,7 +14,6 @@ module "rabbitmq_broker" {
   source                  = "git@github.com:sq-ia/terraform-aws-rabbitmq.git"
   name                    = local.name
   username                = "admin"
-  engine_type             = "RabbitMQ"
   storage_type            = "ebs"
   engine_version          = local.engine_version
   host_instance_type      = local.host_instance_type

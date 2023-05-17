@@ -1,35 +1,35 @@
 variable "name" {
-  description = "The name of the amazonmq cluster"
+  description = "The name of the Amazon MQ cluster. It provides a unique identifier for the cluster."
   type        = string
   default     = ""
 }
 
 variable "environment" {
-  description = "The name of environment"
+  description = "The name of the environment where the Amazon MQ cluster is deployed."
   type        = string
   default     = ""
 }
 
 variable "vpc_id" {
-  description = "VPC ID"
+  description = "The ID of the VPC where the Amazon MQ cluster will be created."
   type        = string
   default     = ""
 }
 
 variable "allowed_cidr_blocks" {
-  description = "A list of CIDR blocks which are allowed to access the database"
+  description = "A list of CIDR blocks that are allowed to access the Amazon MQ cluster."
   default     = []
   type        = list(any)
 }
 
 variable "allowed_security_groups" {
-  description = "A list of Security Group ID's to allow access to"
+  description = "A list of Security Group IDs that are allowed to access the Amazon MQ cluster."
   default     = []
   type        = list(any)
 }
 
 variable "port" {
-  description = "The rabbit-mq cluster port number"
+  description = "The port number on which the RabbitMQ cluster will be accessible."
   default     = 5671
   type        = number
 }
@@ -37,26 +37,26 @@ variable "port" {
 variable "subnet_ids" {
   type        = list(string)
   default     = []
-  description = "Subnet IDs in which to launch the broker.A SINGLE_INSTANCE deployment requires one subnet. An ACTIVE_STANDBY_MULTI_AZ deployment requires multiple subnets."
+  description = "The IDs of the subnets in which the Amazon MQ broker will be launched. "
 
 }
 
 variable "host_instance_type" {
   type        = string
   default     = ""
-  description = "(Required) Broker's instance type. For example, `mq.t3.micro`, `mq.m5.large`."
+  description = "The instance type of the Amazon MQ broker. For example, 'mq.t3.micro' or 'mq.m5.large'."
 }
 
 variable "engine_type" {
   type        = string
-  description = "(optional) Type of broker engine."
+  description = "The type of broker engine used in the Amazon MQ cluster."
   default     = "RabbitMQ"
 }
 
 variable "engine_version" {
   type        = string
   default     = ""
-  description = "(optional) Version of the broker engine. See the [AmazonMQ Broker Engine docs](https://docs.aws.amazon.com/amazon-mq/latest/developer-guide/broker-engine.html) for supported versions."
+  description = "The version of the broker engine used in the Amazon MQ cluster."
 }
 
 variable "storage_type" {
@@ -67,38 +67,38 @@ variable "storage_type" {
 
 variable "authentication_strategy" {
   type        = string
-  description = "(optional) Authentication strategy used to secure the broker"
+  description = "The authentication strategy used to secure the broker."
   default     = "simple"
 }
 
 variable "deployment_mode" {
   type        = string
-  description = "(optional) description"
+  description = "The deployment mode of the Amazon MQ cluster."
   default     = "SINGLE_INSTANCE"
 }
 
 variable "apply_immediately" {
   type        = bool
-  description = "(Optional) Specifies whether any broker modifications are applied immediately, or during the next maintenance window."
+  description = "Specifies whether any broker modifications are applied immediately or during the next maintenance window."
   default     = true
 }
 
 variable "auto_minor_version_upgrade" {
   type        = bool
-  description = "(optional) Whether to automatically upgrade to new minor versions of brokers as Amazon MQ makes releases available."
+  description = "Whether to automatically upgrade to new minor versions of brokers as Amazon MQ makes releases available."
   default     = false
 }
 
 variable "publicly_accessible" {
   type        = bool
-  description = "(optional) Whether to enable connections from applications outside of the VPC that hosts the broker's subnets."
+  description = "Whether to enable connections from applications outside of the VPC that hosts the broker's subnets"
   default     = false
 }
 
 variable "username" {
   type        = string
   default     = ""
-  description = "Username of the user"
+  description = "The username of the user for authentication."
 }
 
 variable "maintenance_window_start_time" {
@@ -107,7 +107,7 @@ variable "maintenance_window_start_time" {
     time_of_day = string
     time_zone   = string
   })
-  description = "Configuration block for the maintenance window start time."
+  description = "The configuration block for the maintenance window start time."
   default = {
     day_of_week = "MONDAY"
     time_of_day = "22:45"
