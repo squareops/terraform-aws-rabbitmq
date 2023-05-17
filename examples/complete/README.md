@@ -38,10 +38,10 @@ No inputs.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_broker-arn"></a> [broker-arn](#output\_broker-arn) | ARN of the RabbitMQ broker. |
-| <a name="output_broker-console_url"></a> [broker-console\_url](#output\_broker-console\_url) | The URL of the broker's RabbitMQ Web Console |
-| <a name="output_broker-endpoint"></a> [broker-endpoint](#output\_broker-endpoint) | Broker's wire-level protocol endpoint |
-| <a name="output_broker-id"></a> [broker-id](#output\_broker-id) | ID of the RabbitMQ broker. |
-| <a name="output_rabbitmq_password"></a> [rabbitmq\_password](#output\_rabbitmq\_password) | The Rabbitmq password (this password may be old, because Terraform doesn't track it after initial creation) |
-| <a name="output_security_group"></a> [security\_group](#output\_security\_group) | The security group ID of the cluster |
+| <a name="output_broker-arn"></a> [broker-arn](#output\_broker-arn) | The Amazon Resource Name (ARN) of the RabbitMQ broker. |
+| <a name="output_broker-console_url"></a> [broker-console\_url](#output\_broker-console\_url) | The URL of the RabbitMQ Web Console for managing the broker. |
+| <a name="output_broker-endpoint"></a> [broker-endpoint](#output\_broker-endpoint) | The wire-level protocol endpoint of the RabbitMQ broker. |
+| <a name="output_broker-id"></a> [broker-id](#output\_broker-id) | The unique identifier of the RabbitMQ broker. |
+| <a name="output_rabbitmq_password"></a> [rabbitmq\_password](#output\_rabbitmq\_password) | The password for accessing the RabbitMQ cluster. Note that Terraform does not track this password after initial creation. |
+| <a name="output_security_group"></a> [security\_group](#output\_security\_group) | The security group ID associated with the RabbitMQ cluster. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
