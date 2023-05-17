@@ -5,9 +5,26 @@
 
 ### [SquareOps Technologies](https://squareops.com/) Your DevOps Partner for Accelerating cloud journey.
 <br>
-We publish several terraform modules.
-<br>
-Terraform Module to create AWS AmazonMQ on AWS Cloud.
+This module provides an easy and efficient way to provision and manage RabbitMQ clusters on AWS. It simplifies the process of creating highly available and scalable RabbitMQ infrastructures by automating the deployment and configuration tasks.
+Features
+
+  1. Easy Configuration: The module allows you to define your RabbitMQ clusters and related resources using a concise and declarative syntax.
+
+  2. High Availability: It supports the creation of RabbitMQ clusters with multiple nodes distributed across availability zones, ensuring fault tolerance and high availability.
+
+  3. Security: The module integrates with AWS security features, allowing you to define security groups and control access to your RabbitMQ clusters.
+
+  4. Scalability: You can easily scale your RabbitMQ clusters up or down by adjusting the number of nodes and instance types.
+
+  5. Monitoring and Alerting: It provides integration with CloudWatch, enabling you to monitor key metrics and set up alerts for your RabbitMQ clusters.
+
+  6. Logging: The module supports logging of RabbitMQ server logs to CloudWatch Logs or other specified destinations.
+
+  7. Maintenance: You can configure maintenance windows for your RabbitMQ clusters to control the timing of maintenance activities.
+
+  8. Secrets Management: The module supports the use of AWS Secrets Manager to securely store and manage RabbitMQ credentials.
+  
+  9. Customization: It offers a wide range of customizable parameters, allowing you to tailor the RabbitMQ configuration to your specific needs.
 
 ## Uses Example
 ```hcl
