@@ -15,21 +15,19 @@ module "rabbitmq_broker" {
   source = "gitlab.com/sq-ia/aws/rabbitmq.git"
   environment                = "production"
   name                       = "skaf"
+  vpc_id                     = "vpc-xyz5ed3skaf"
+  username                   = "admin"
+  subnet_ids                 = ["subnet-xyz355fskaf"]
   engine_type                = "RabbitMQ"
   engine_version             = "3.8.23"
   storage_type               = "ebs"
   host_instance_type         = "mq.m5.large"
-  authentication_strategy    = "simple"
   deployment_mode            = "SINGLE_INSTANCE"
   apply_immediately          = true
-  auto_minor_version_upgrade = false
   publicly_accessible        = false
-  vpc_id                     = "vpc-xyz5ed733e273skaf"
-  subnet_ids                 = ["subnet-xyz35ec60335fskaf"]
-  allowed_cidr_blocks        = []
+  authentication_strategy    = "simple"
   allowed_security_groups    = ["sg-xyzf8bdc01fd9skaf"]
-  port                       = 5671
-  username                   = "admin"
+  auto_minor_version_upgrade = false
   maintenance_window_start_time = {
     day_of_week = "SUNDAY"
     time_of_day = "00:30"
@@ -99,7 +97,7 @@ Security scanning is graciously provided by Prowler. Proowler is the leading ful
 | <a name="input_environment"></a> [environment](#input\_environment) | The name of environment | `string` | `""` | no |
 | <a name="input_host_instance_type"></a> [host\_instance\_type](#input\_host\_instance\_type) | (Required) Broker's instance type. For example, `mq.t3.micro`, `mq.m5.large`. | `string` | `""` | no |
 | <a name="input_maintenance_window_start_time"></a> [maintenance\_window\_start\_time](#input\_maintenance\_window\_start\_time) | Configuration block for the maintenance window start time. | <pre>object({<br>    day_of_week = string<br>    time_of_day = string<br>    time_zone   = string<br>  })</pre> | <pre>{<br>  "day_of_week": "MONDAY",<br>  "time_of_day": "22:45",<br>  "time_zone": "Europe/Berlin"<br>}</pre> | no |
-| <a name="input_name"></a> [name](#input\_name) | The name of the amazonmq cluster | `string` | `"us-east-1"` | no |
+| <a name="input_name"></a> [name](#input\_name) | The name of the amazonmq cluster | `string` | `""` | no |
 | <a name="input_port"></a> [port](#input\_port) | The rabbit-mq cluster port number | `number` | `5671` | no |
 | <a name="input_publicly_accessible"></a> [publicly\_accessible](#input\_publicly\_accessible) | (optional) Whether to enable connections from applications outside of the VPC that hosts the broker's subnets. | `bool` | `false` | no |
 | <a name="input_recovery_window_aws_secret"></a> [recovery\_window\_aws\_secret](#input\_recovery\_window\_aws\_secret) | Number of days that AWS Secrets Manager waits before it can delete the secret. This value can be 0 to force deletion without recovery or range from 7 to 30 days. | `number` | `0` | no |
@@ -185,4 +183,3 @@ We believe that the key to success in the digital age is the ability to deliver 
 We provide [support](https://squareops.com/contact-us/) on all of our projects, no matter how small or large they may be.
 
 You can find more information about our company on this [squareops.com](https://squareops.com/), follow us on [linkdin](https://www.linkedin.com/company/squareops-technologies-pvt-ltd/), or fill out a [job application](https://squareops.com/careers/). If you have any questions or would like assistance with your cloud strategy and implementation, please don't hesitate to [contact us](https://squareops.com/contact-us/).
-
