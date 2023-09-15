@@ -26,24 +26,32 @@ Features
 
   9. Customization: It offers a wide range of customizable parameters, allowing you to tailor the RabbitMQ configuration to your specific needs.
 
+  10. CloudWatch Alerts: Set up CloudWatch alarms to monitor the health and performance of your Redis cluster. Integrate these alarms with AWS Simple Notification Service (SNS) to receive real-time alerts. Use AWS Lambda functions to customize your alerting logic, and send notifications to Slack channels for immediate visibility into your AWS RabbitMQ status.
+
 ## Uses Example
 ```hcl
 module "rabbitmq_broker" {
   source = "gitlab.com/sq-ia/aws/rabbitmq.git"
-  environment                = "production"
-  name                       = "skaf"
-  vpc_id                     = "vpc-xyz5ed3skaf"
-  username                   = "admin"
-  subnet_ids                 = ["subnet-xyz355fskaf"]
-  engine_version             = "3.10.20"
-  storage_type               = "ebs"
-  host_instance_type         = "mq.m5.large"
-  deployment_mode            = "SINGLE_INSTANCE"
-  apply_immediately          = true
-  publicly_accessible        = false
-  authentication_strategy    = "simple"
-  allowed_security_groups    = ["sg-xyzf8bdc01fd9skaf"]
-  auto_minor_version_upgrade = false
+  environment                      = "production"
+  name                             = "skaf"
+  vpc_id                           = "vpc-xyz5ed3skaf"
+  username                         = "admin"
+  subnet_ids                       = ["subnet-xyz355fskaf"]
+  engine_version                   = "3.10.20"
+  storage_type                     = "ebs"
+  host_instance_type               = "mq.m5.large"
+  deployment_mode                  = "SINGLE_INSTANCE"
+  apply_immediately                = true
+  publicly_accessible              = false
+  authentication_strategy          = "simple"
+  allowed_security_groups          = ["sg-xyzf8bdc01fd9skaf"]
+  auto_minor_version_upgrade       = false
+  cloudwatch_metric_alarms_enabled = true
+  alarm_cpu_threshold_percent      = 70
+  alarm_memory_used_threshold      = "10000000" # in bytes
+  slack_username                   = "John"
+  slack_channel                    = "skaf"
+  slack_webhook_url                = "https://hooks.slack.com/services/xxxxxxxxx"
   maintenance_window_start_time = {
     day_of_week = "SUNDAY"
     time_of_day = "00:30"
@@ -77,6 +85,7 @@ Security scanning is graciously provided by Prowler. Proowler is the leading ful
 
 | Name | Version |
 |------|---------|
+| <a name="provider_archive"></a> [archive](#provider\_archive) | n/a |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.23 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.0.0 |
 
@@ -84,29 +93,43 @@ Security scanning is graciously provided by Prowler. Proowler is the leading ful
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_cw_sns_slack"></a> [cw\_sns\_slack](#module\_cw\_sns\_slack) | ./lambda | n/a |
 | <a name="module_security_group_mq"></a> [security\_group\_mq](#module\_security\_group\_mq) | terraform-aws-modules/security-group/aws | 4.13.0 |
 
 ## Resources
 
 | Name | Type |
 |------|------|
+| [aws_cloudwatch_metric_alarm.cache_cpu](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.memory_used](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_kms_ciphertext.slack_url](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_ciphertext) | resource |
+| [aws_kms_key.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
+| [aws_lambda_permission.sns_lambda_slack_invoke](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_mq_broker.amazonmq](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/mq_broker) | resource |
 | [aws_secretsmanager_secret.secret_mq](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret) | resource |
 | [aws_secretsmanager_secret_version.secret](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_version) | resource |
 | [aws_security_group_rule.cidr_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.default_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.https_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_sns_topic.slack_topic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic) | resource |
+| [aws_sns_topic_subscription.slack-endpoint](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_subscription) | resource |
 | [random_password.password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [archive_file.lambdazip](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_alarm_actions"></a> [alarm\_actions](#input\_alarm\_actions) | Alarm action list | `list(string)` | `[]` | no |
+| <a name="input_alarm_cpu_threshold_percent"></a> [alarm\_cpu\_threshold\_percent](#input\_alarm\_cpu\_threshold\_percent) | CPU threshold alarm level | `number` | `75` | no |
+| <a name="input_alarm_memory_used_threshold"></a> [alarm\_memory\_used\_threshold](#input\_alarm\_memory\_used\_threshold) | Alarm threshold for the 'lowFreeStorageSpace' alarm | `string` | `"1000000000"` | no |
 | <a name="input_allowed_cidr_blocks"></a> [allowed\_cidr\_blocks](#input\_allowed\_cidr\_blocks) | A list of CIDR blocks that are allowed to access the Amazon MQ cluster. | `list(any)` | `[]` | no |
 | <a name="input_allowed_security_groups"></a> [allowed\_security\_groups](#input\_allowed\_security\_groups) | A list of Security Group IDs that are allowed to access the Amazon MQ cluster. | `list(any)` | `[]` | no |
 | <a name="input_apply_immediately"></a> [apply\_immediately](#input\_apply\_immediately) | Specifies whether any broker modifications are applied immediately or during the next maintenance window. | `bool` | `true` | no |
 | <a name="input_authentication_strategy"></a> [authentication\_strategy](#input\_authentication\_strategy) | The authentication strategy used to secure the broker. | `string` | `"simple"` | no |
 | <a name="input_auto_minor_version_upgrade"></a> [auto\_minor\_version\_upgrade](#input\_auto\_minor\_version\_upgrade) | Whether to automatically upgrade to new minor versions of brokers as Amazon MQ makes releases available. | `bool` | `false` | no |
+| <a name="input_cloudwatch_metric_alarms_enabled"></a> [cloudwatch\_metric\_alarms\_enabled](#input\_cloudwatch\_metric\_alarms\_enabled) | Boolean flag to enable/disable CloudWatch metrics alarms | `bool` | `false` | no |
+| <a name="input_cw_sns_topic_arn"></a> [cw\_sns\_topic\_arn](#input\_cw\_sns\_topic\_arn) | The username to use when sending notifications to Slack. | `string` | `""` | no |
 | <a name="input_deployment_mode"></a> [deployment\_mode](#input\_deployment\_mode) | The deployment mode of the Amazon MQ cluster. | `string` | `"SINGLE_INSTANCE"` | no |
 | <a name="input_engine_type"></a> [engine\_type](#input\_engine\_type) | The type of broker engine used in the Amazon MQ cluster. | `string` | `"RabbitMQ"` | no |
 | <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | The version of the broker engine used in the Amazon MQ cluster. | `string` | `""` | no |
@@ -114,9 +137,13 @@ Security scanning is graciously provided by Prowler. Proowler is the leading ful
 | <a name="input_host_instance_type"></a> [host\_instance\_type](#input\_host\_instance\_type) | The instance type of the Amazon MQ broker. For example, 'mq.t3.micro' or 'mq.m5.large'. | `string` | `""` | no |
 | <a name="input_maintenance_window_start_time"></a> [maintenance\_window\_start\_time](#input\_maintenance\_window\_start\_time) | The configuration block for the maintenance window start time. | <pre>object({<br>    day_of_week = string<br>    time_of_day = string<br>    time_zone   = string<br>  })</pre> | <pre>{<br>  "day_of_week": "MONDAY",<br>  "time_of_day": "22:45",<br>  "time_zone": "Europe/Berlin"<br>}</pre> | no |
 | <a name="input_name"></a> [name](#input\_name) | The name of the Amazon MQ cluster. It provides a unique identifier for the cluster. | `string` | `""` | no |
+| <a name="input_ok_actions"></a> [ok\_actions](#input\_ok\_actions) | The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Number (ARN) | `list(string)` | `[]` | no |
 | <a name="input_port"></a> [port](#input\_port) | The port number on which the RabbitMQ cluster will be accessible. | `number` | `5671` | no |
 | <a name="input_publicly_accessible"></a> [publicly\_accessible](#input\_publicly\_accessible) | Whether to enable connections from applications outside of the VPC that hosts the broker's subnets | `bool` | `false` | no |
 | <a name="input_recovery_window_aws_secret"></a> [recovery\_window\_aws\_secret](#input\_recovery\_window\_aws\_secret) | Number of days that AWS Secrets Manager waits before it can delete the secret. This value can be 0 to force deletion without recovery or range from 7 to 30 days. | `number` | `0` | no |
+| <a name="input_slack_channel"></a> [slack\_channel](#input\_slack\_channel) | The Slack channel where notifications will be posted. | `string` | `""` | no |
+| <a name="input_slack_username"></a> [slack\_username](#input\_slack\_username) | The username to use when sending notifications to Slack. | `string` | `""` | no |
+| <a name="input_slack_webhook_url"></a> [slack\_webhook\_url](#input\_slack\_webhook\_url) | The Slack Webhook URL where notifications will be sent. | `string` | `""` | no |
 | <a name="input_storage_type"></a> [storage\_type](#input\_storage\_type) | (optional) Storage type of the broker, only ebs work with mq.m5.large | `string` | `null` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The IDs of the subnets in which the Amazon MQ broker will be launched. | `list(string)` | `[]` | no |
 | <a name="input_username"></a> [username](#input\_username) | The username of the user for authentication. | `string` | `""` | no |
