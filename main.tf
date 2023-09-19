@@ -124,3 +124,136 @@ resource "aws_secretsmanager_secret_version" "secret" {
    }
 EOF
 }
+
+resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
+  count               = var.cloudwatch_metric_alarms_enabled ? 1 : 0
+  alarm_name          = format("%s-%s-%s", var.environment, var.name, "cpu-utilization")
+  alarm_description   = "Rabbit MQ System CPU utilization"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "SystemCpuUtilization"
+  namespace           = "AWS/AmazonMQ"
+  period              = "300"
+  statistic           = "Average"
+
+  threshold = var.alarm_cpu_threshold_percent
+
+  dimensions = {
+    Broker = aws_mq_broker.amazonmq.broker_name
+  }
+
+  alarm_actions = [aws_sns_topic.slack_topic[0].arn]
+  ok_actions    = [aws_sns_topic.slack_topic[0].arn]
+  depends_on    = [aws_sns_topic.slack_topic]
+
+  tags = merge(
+    { "Name" = format("%s-%s-%s", var.environment, var.name, "system_cpu_utilization") },
+    local.tags,
+  )
+}
+
+resource "aws_cloudwatch_metric_alarm" "memory_used" {
+  count               = var.cloudwatch_metric_alarms_enabled ? 1 : 0
+  alarm_name          = format("%s-%s-%s", var.environment, var.name, "memory-used")
+  alarm_description   = "Rabbit MQ Memory Used"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "RabbitMQMemUsed"
+  namespace           = "AWS/AmazonMQ"
+  period              = "300"
+  statistic           = "Average"
+
+  threshold = var.alarm_memory_used_threshold
+  dimensions = {
+    Broker = aws_mq_broker.amazonmq.broker_name
+  }
+
+  alarm_actions = [aws_sns_topic.slack_topic[0].arn]
+  ok_actions    = [aws_sns_topic.slack_topic[0].arn]
+  depends_on    = [aws_sns_topic.slack_topic]
+
+  tags = merge(
+    { "Name" = format("%s-%s-%s", var.environment, var.name, "system_cpu_utilization") },
+    local.tags,
+  )
+}
+
+resource "aws_kms_key" "this" {
+  count       = var.cloudwatch_metric_alarms_enabled ? 1 : 0
+  description = "KMS key for notify-slack test"
+}
+
+resource "aws_kms_ciphertext" "slack_url" {
+  count     = var.cloudwatch_metric_alarms_enabled ? 1 : 0
+  plaintext = var.slack_webhook_url
+  key_id    = aws_kms_key.this[0].arn
+}
+
+resource "aws_sns_topic" "slack_topic" {
+  count           = var.cloudwatch_metric_alarms_enabled ? 1 : 0
+  depends_on      = [aws_mq_broker.amazonmq]
+  name            = format("%s-%s-%s", var.environment, var.name, "slack-topic")
+  delivery_policy = <<EOF
+{
+  "http": {
+    "defaultHealthyRetryPolicy": {
+      "minDelayTarget": 20,
+      "maxDelayTarget": 20,
+      "numRetries": 3,
+      "numMaxDelayRetries": 0,
+      "numNoDelayRetries": 0,
+      "numMinDelayRetries": 0,
+      "backoffFunction": "linear"
+    },
+    "disableSubscriptionOverrides": false,
+    "defaultThrottlePolicy": {
+      "maxReceivesPerSecond": 1
+    }
+  }
+}
+EOF
+}
+
+data "archive_file" "lambdazip" {
+  type        = "zip"
+  output_path = "${path.module}/lambda/sns_slack.zip"
+
+  source_dir = "${path.module}/lambda/"
+}
+
+
+module "cw_sns_slack" {
+  source = "./lambda"
+
+  name          = format("%s-%s-%s", var.environment, var.name, "sns-slack")
+  description   = "notify slack channel on sns topic"
+  artifact_file = "${path.module}/lambda/sns_slack.zip"
+  handler       = "sns_slack.lambda_handler"
+  runtime       = "python3.8"
+  memory_size   = 128
+  timeout       = 30
+  environment = {
+    "SLACK_URL"     = var.slack_webhook_url
+    "SLACK_CHANNEL" = var.slack_channel
+    "SLACK_USER"    = var.slack_username
+  }
+  tags = merge(
+    { "Name" = format("%s-%s-%s", var.environment, var.name, "lambda") },
+    local.tags,
+  )
+}
+
+resource "aws_sns_topic_subscription" "slack-endpoint" {
+  endpoint               = module.cw_sns_slack.arn
+  protocol               = "lambda"
+  endpoint_auto_confirms = true
+  topic_arn              = aws_sns_topic.slack_topic[0].arn
+}
+
+resource "aws_lambda_permission" "sns_lambda_slack_invoke" {
+  statement_id  = "sns_slackAllowExecutionFromSNS"
+  action        = "lambda:InvokeFunction"
+  function_name = module.cw_sns_slack.arn
+  principal     = "sns.amazonaws.com"
+  source_arn    = aws_sns_topic.slack_topic[0].arn
+}
