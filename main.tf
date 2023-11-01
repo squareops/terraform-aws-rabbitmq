@@ -184,7 +184,7 @@ resource "aws_kms_key" "this" {
 }
 
 resource "aws_kms_ciphertext" "slack_url" {
-  count       = var.slack_notification_enabled ? 1 : 0
+  count     = var.slack_notification_enabled ? 1 : 0
   plaintext = var.slack_webhook_url
   key_id    = aws_kms_key.this[0].arn
 }
@@ -224,7 +224,7 @@ data "archive_file" "lambdazip" {
 
 
 module "cw_sns_slack" {
-  count       = var.slack_notification_enabled ? 1 : 0
+  count  = var.slack_notification_enabled ? 1 : 0
   source = "./lambda"
 
   name          = format("%s-%s-%s", var.environment, var.name, "sns-slack")
@@ -246,7 +246,7 @@ module "cw_sns_slack" {
 }
 
 resource "aws_sns_topic_subscription" "slack-endpoint" {
-  count       = var.slack_notification_enabled ? 1 : 0
+  count                  = var.slack_notification_enabled ? 1 : 0
   endpoint               = module.cw_sns_slack[0].arn
   protocol               = "lambda"
   endpoint_auto_confirms = true
@@ -254,7 +254,7 @@ resource "aws_sns_topic_subscription" "slack-endpoint" {
 }
 
 resource "aws_lambda_permission" "sns_lambda_slack_invoke" {
-  count       = var.slack_notification_enabled ? 1 : 0
+  count         = var.slack_notification_enabled ? 1 : 0
   statement_id  = "sns_slackAllowExecutionFromSNS"
   action        = "lambda:InvokeFunction"
   function_name = module.cw_sns_slack[0].arn
