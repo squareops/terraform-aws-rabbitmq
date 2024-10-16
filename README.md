@@ -31,26 +31,26 @@ Features
 ## Uses Example
 ```hcl
 module "rabbitmq_broker" {
-  source = "gitlab.com/sq-ia/aws/rabbitmq.git"
-  environment                      = "production"
-  name                             = "skaf"
-  vpc_id                           = "vpc-xyz5ed3skaf"
+  source = "gitlab.com/squareops/aws/rabbitmq.git"
+  name                             = local.name
   username                         = "admin"
-  subnet_ids                       = ["subnet-xyz355fskaf"]
-  engine_version                   = "3.10.20"
   storage_type                     = "ebs"
-  host_instance_type               = "mq.m5.large"
+  engine_version                   = local.engine_version
+  host_instance_type               = local.host_instance_type
+  environment                      = local.environment
+  vpc_id                           = local.vpc_id
+  subnet_ids                       = local.subnet_ids
   deployment_mode                  = "SINGLE_INSTANCE"
   apply_immediately                = true
   publicly_accessible              = false
   authentication_strategy          = "simple"
-  allowed_security_groups          = ["sg-xyzf8bdc01fd9skaf"]
-  auto_minor_version_upgrade       = false
+  allowed_security_groups          = local.allowed_security_groups
   cloudwatch_metric_alarms_enabled = true
   alarm_cpu_threshold_percent      = 70
   alarm_memory_used_threshold      = "10000000" # in bytes
-  slack_username                   = "John"
-  slack_channel                    = "skaf"
+  slack_notification_enabled       = false
+  slack_username                   = ""
+  slack_channel                    = ""
   slack_webhook_url                = "https://hooks.slack.com/services/xxxxxxxxx"
   maintenance_window_start_time = {
     day_of_week = "SUNDAY"
@@ -58,6 +58,7 @@ module "rabbitmq_broker" {
     time_zone   = "GMT"
   }
 }
+
 
 ```
 ## Important Notes

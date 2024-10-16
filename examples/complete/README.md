@@ -24,7 +24,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_rabbitmq_broker"></a> [rabbitmq\_broker](#module\_rabbitmq\_broker) | git@github.com:sq-ia/terraform-aws-rabbitmq.git | n/a |
+| <a name="module_rabbitmq_broker"></a> [rabbitmq\_broker](#module\_rabbitmq\_broker) | git@github.com:squareops/terraform-aws-rabbitmq.git | n/a |
 
 ## Resources
 
