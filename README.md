@@ -31,7 +31,8 @@ Features
 ## Uses Example
 ```hcl
 module "rabbitmq_broker" {
-  source = "gitlab.com/squareops/aws/rabbitmq.git"
+  source                           =  "squareops/rabbitmq/kubernetes"
+  version                          = "2.1.1"
   name                             = local.name
   username                         = "admin"
   storage_type                     = "ebs"
