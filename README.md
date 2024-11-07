@@ -31,8 +31,8 @@ Features
 ## Uses Example
 ```hcl
 module "rabbitmq_broker" {
-  source                           =  "squareops/rabbitmq/kubernetes"
-  version                          = "2.1.1"
+  source                           = "squareops/rabbitmq/aws"
+  version                          = "2.1.2"
   name                             = local.name
   username                         = "admin"
   storage_type                     = "ebs"
