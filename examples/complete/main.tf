@@ -1,6 +1,6 @@
 locals {
   name                    = "skaf"
-  region                  = "us-east-2"
+  region                  = ""
   environment             = "production"
   engine_version          = "3.10.20"
   host_instance_type      = "mq.m5.large"
@@ -11,7 +11,8 @@ locals {
 }
 
 module "rabbitmq_broker" {
-  source                           = "git@github.com:sq-ia/terraform-aws-rabbitmq.git"
+  source                           = "squareops/rabbitmq/aws"
+  version                          = "2.1.2"
   name                             = local.name
   username                         = "admin"
   storage_type                     = "ebs"
